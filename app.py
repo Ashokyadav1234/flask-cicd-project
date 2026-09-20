@@ -6,7 +6,7 @@ courses = [
     {
         "name": "Python Mastery",
         "category": "Programming",
-        "price": 799,
+        "price": 99,
         "description": "Learn Python from basics to advanced concepts."
     },
     {
