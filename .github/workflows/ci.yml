@@ -33,8 +33,8 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-           cd ~/flask-cicd-project
-git fetch origin main
-git reset --hard origin/main
-pkill -f "python3 app.py" || true
-nohup python3 app.py > flask.log 2>&1 &
+            cd ~/flask-cicd-project
+            git fetch origin main
+            git reset --hard origin/main
+            pkill -f "python3 app.py" || true
+            nohup python3 app.py > flask.log 2>&1 &
