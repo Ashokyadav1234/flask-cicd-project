@@ -36,5 +36,11 @@ jobs:
             cd ~/flask-cicd-project
             git fetch origin main
             git reset --hard origin/main
-            pkill -f "python3 app.py" || true
-            nohup python3 app.py > flask.log 2>&1 &
+
+            PID=$(ps -eo pid,args | grep '[p]ython3 app.py' | awk '{print $1}')
+            if [ -n "$PID" ]; then
+              kill "$PID"
+              sleep 2
+            fi
+
+            nohup python3 app.py > flask.log 2>&1 </dev/null &
