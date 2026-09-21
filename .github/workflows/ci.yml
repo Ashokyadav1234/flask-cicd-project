@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout Code
         uses: actions/checkout@v4
 
@@ -32,16 +33,33 @@ jobs:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
+
           script: |
             cd ~/flask-cicd-project
 
+            echo "Pulling latest code..."
             git fetch origin main
             git reset --hard origin/main
 
-            PID=$(ps -eo pid,args | grep '[p]ython3 app.py' | awk '{print $1}')
-            if [ -n "$PID" ]; then
-              kill "$PID"
-              sleep 2
-            fi
+            echo "Stopping old Flask processes..."
+
+            PIDS=$(ps -eo pid=,args= | awk '$2=="python3" && $3=="app.py" {print $1}')
+
+            for PID in $PIDS; do
+              echo "Stopping Flask process: $PID"
+              kill "$PID" 2>/dev/null || true
+            done
+
+            sleep 2
+
+            echo "Starting Flask application..."
 
             nohup python3 app.py > flask.log 2>&1 </dev/null &
+
+            sleep 2
+
+            echo "Checking Flask process..."
+
+            ps -ef | grep '[p]ython3 app.py'
+
+            echo "Deployment completed successfully."
